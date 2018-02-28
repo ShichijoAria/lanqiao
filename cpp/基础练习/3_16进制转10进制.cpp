@@ -13,11 +13,35 @@ FFFF
 
 #include <iostream>
 using namespace std;
-int main()
-{
+
+long getDigit(char hexadecimal){
+    if(hexadecimal>'9')
+        return hexadecimal-'A'+10;
+    else
+        return hexadecimal-'0';
+}
+
+int main() {
     string octonary;
+    long long sum=0;
     cin>>octonary;
-    cout<<octonary;
+    for (int i =0; i <octonary.length() ; ++i) {
+        sum*=16;
+        sum+=getDigit(octonary[i]);
+    }
+    cout<<sum;
     return 0;
 }
 
+/*
+unsigned   int   0～4294967295
+int   -2147483648～2147483647
+unsigned long 0～4294967295
+long   -2147483648～2147483647
+long long的最大值：9223372036854775807
+long long的最小值：-9223372036854775808
+unsigned long long的最大值：1844674407370955161
+
+__int64的最大值：9223372036854775807
+__int64的最小值：-9223372036854775808
+unsigned __int64的最大值：18446744073709551615*/
