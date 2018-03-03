@@ -27,51 +27,62 @@
 样例输出
 0*/
 
+
+//vector效率太低会造成时间超时，尽量避免使用
+//vector计算2 7皇后用了156ms 而使用动态数组计算2 8皇后只用了31ms
 #include <iostream>
 #include <cmath>
-#include <vector>
 using namespace std;
-int cnt = 0;
+int sum = 0;
 
-bool issafe(vector<vector<int> > pic, vector<int> pos, int row) {
+bool isSafe(int *coordinates,int row){
     for(int i = 0; i < row; i++) {
-        if(pos[i] == pos[row] || abs(i - row) == abs(pos[i] - pos[row]))
+        if(coordinates[i] == coordinates[row] || abs(i - row) == abs(coordinates[i] - coordinates[row]))
             return false;
     }
     return true;
 }
 
-void blackdfs(vector<vector<int> > blackpic, vector<int> blackpos, int n, int blackrow) {
-    if(blackrow == n) {
-        cnt++;
-        return ;
+void blackDfs(int **blackChessboard,int *blackCoordinates,int n,int blackRow){
+    if(blackRow == n) {
+        sum++;
+        return;
     }
-    for(blackpos[blackrow] = 0; blackpos[blackrow] < n; blackpos[blackrow]++) {
-        if(blackpic[blackrow][blackpos[blackrow]] == 1 && issafe(blackpic, blackpos, blackrow)) {
-            blackdfs(blackpic, blackpos, n, blackrow + 1);
+    for(blackCoordinates[blackRow] = 0; blackCoordinates[blackRow] < n; blackCoordinates[blackRow]++) {
+        if(blackChessboard[blackRow][blackCoordinates[blackRow]] == 1 && isSafe(blackCoordinates, blackRow)) {
+            blackDfs(blackChessboard, blackCoordinates, n, blackRow + 1);
         }
     }
 }
 
-
-void dfs(vector<vector<int> > pic, vector<int> pos, int n, int row) {
+void dfs(int **chessboard,int *coordinates,int n,int row){
     if(row == n) {
-        vector<vector<int> > blackpic(n, vector<int>(n));
+        int **blackChessboard=new int*[n];
+        int *blackCoordinates=new int[n];
         for(int i = 0; i < n; i++) {
+            blackChessboard[i]=new int[n];
             for(int j = 0; j < n; j++) {
-                blackpic[i][j] = pic[i][j];
+                blackChessboard[i][j]= chessboard[i][j];
             }
         }
+
         for(int i = 0; i < n; i++) {
-            blackpic[i][pos[i]] = 0;
+            blackChessboard[i][coordinates[i]] = 0;
         }
-        vector<int> blackpos(n);
-        blackdfs(blackpic, blackpos, n, 0);
-        return ;
+        blackDfs(blackChessboard, blackCoordinates, n, 0);
+        return;
     }
-    for(pos[row] = 0; pos[row] < n; pos[row]++) {
-        if(pic[row][pos[row]] == 1 && issafe(pic, pos, row)) {
-            dfs(pic, pos, n, row + 1);
+    for(coordinates[row] = 0; coordinates[row] < n; coordinates[row]++) {
+        if(chessboard[row][coordinates[row]] == 1 && isSafe(coordinates, row)) {
+            dfs(chessboard, coordinates, n, row + 1);
+        }
+    }
+}
+
+void traverse(int **chessboard,int n){
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            cout<<chessboard[i][j];
         }
     }
 }
@@ -79,14 +90,15 @@ void dfs(vector<vector<int> > pic, vector<int> pos, int n, int row) {
 int main() {
     int n;
     cin >> n;
-    vector<vector<int> > pic(n, vector<int>(n));
-    vector<int> pos(n);
+    int **chessboard=new int*[n];
+    int *coordinates=new int[n];
     for(int i = 0; i < n; i++) {
+        chessboard[i]=new int[n];
         for(int j = 0; j < n; j++) {
-            cin >> pic[i][j];
+            cin >> chessboard[i][j];
         }
     }
-    dfs(pic, pos, n, 0);
-    cout << cnt;
+    dfs(chessboard, coordinates, n, 0);
+    cout<<sum;
     return 0;
 }
